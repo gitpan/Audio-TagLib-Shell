@@ -19,7 +19,7 @@ our @EXPORT_OK = qw(shell);
 
 our @EXPORT    = qw(shell);
 
-our $VERSION   = '1.4';
+our $VERSION   = '1.41';
 
 # support encodings
 our @ENCODING  = qw(Latin1 UTF8);
@@ -39,6 +39,7 @@ use subs qw(shell __complete);
 #}
 # nice alias
 $CMD{quit} = $CMD{exit};
+$CMD{bye}  = $CMD{exit};
 
 # private reference to current openned file
 # to make sure there is ONLY ONE file openned
@@ -95,10 +96,26 @@ sub __complete(@) {
                         # a small trick here to remove the
                         # tail space for dir
                         my $file = "$1/".$match[0];
-                        if (-d $file) {
-                            return +($file."/", $file."/ ");
+                        #print $1, "\n";
+                        
+                        my $complete;
+                        # check space in $2 and then $1
+                        # $1 will be replaced after next reg-match
+                        my $dir = $1;
+                        my $name = $2;
+                        if ($name and $name =~ m/ /o) {
+                            $complete = substr($match[0], 
+                                               rindex($name, " ")+1);
+                        } elsif ($dir and $dir =~ m/ /o) {
+                            $complete = (split / /, $dir)[-1]."/".$match[0];
                         } else {
-                            return $file;
+                            $complete = $file;
+                        }
+                        if (-d $file) {
+                            return +($complete."/", 
+                                     $complete."/ ");
+                        } else {
+                            return $complete;
                         }
                     } elsif (scalar(@match) == 0) {
                         # no match, no complete
@@ -134,7 +151,22 @@ sub __complete(@) {
                             # $2 is the longest common string
                             return +(@match, undef);
                         } else {
-                            return +("$1/$common", "$1/$common ");
+                            # check space in $2 and then $1
+                            my $complete;
+                            my $dir = $1;
+                            my $name = $2;
+                            #print $name, "\n";
+                            if ($name and $name =~ m/ /o) {
+                                $complete = substr($common, 
+                                                  rindex($name, " ")+1);
+                            } elsif ($dir and $dir =~ m/ /o) {
+                                $complete = (split / /, $dir)[-1].
+                                  "/$common";
+                            } else {
+                                $complete = "$1/$common";
+                            }
+                            return +("$complete", 
+                                     "$complete ");
                         }
                         # NOREACH
                     }
@@ -152,10 +184,20 @@ sub __complete(@) {
                 @match = sort grep { m/^\Q$path\E/ } @entry;
                 if(scalar(@match) == 1) {
                     my $file = $match[0];
-                    if (-d $file) {
-                        return +($file."/", $file."/ ");
+                    my $complete;
+                    # check space in $path
+                    # $1 will be replaced after next reg-match
+                    my $name = $path;
+                    if ($name and $name =~ m/ /o) {
+                        $complete = (split / /, $name)[-1]."/".$match[0];
                     } else {
-                        return $file;
+                        $complete = $file;
+                    }
+                    if (-d $file) {
+                        return +($complete."/", 
+                                 $complete."/ ");
+                    } else {
+                        return $complete;
                     }
                 } elsif (scalar(@match) == 0) {
                     return +();
@@ -189,7 +231,17 @@ sub __complete(@) {
                         # $path is the longest common string
                         return +(@match, undef);
                     } else {
-                        return +("$common", "$common ");
+                        # check space in $path
+                        my $complete;
+                        my $name = $path;
+                        if ($name and $name =~ m/ /o) {
+                            $complete = substr($common, 
+                                               rindex($name, " ")+1);
+                        } else {
+                            $complete = "$path/$common";
+                        }
+                        return +("$complete", 
+                                 "$complete ");
                     }
                     # NOREACH
                 }

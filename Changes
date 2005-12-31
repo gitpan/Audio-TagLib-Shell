@@ -4,3 +4,5 @@ Revision history for Perl extension Audio::TagLib::Shell.
 	- original version; created by h2xs 1.23 with options
 		-X -n Audio::TagLib::Shell
 
+1.41 Sat Dec 31 2005
+	- <TAB> completion bug fix
