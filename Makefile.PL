@@ -5,7 +5,8 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Audio::TagLib::Shell',
     VERSION_FROM      => 'lib/Audio/TagLib/Shell.pm', # finds $VERSION
-    PREREQ_PM         => { Audio::TagLib => 1.4, Cwd => 2.06 }, # e.g., Module::Name => 1.1
+    PREREQ_PM         => { Audio::TagLib => 1.4, Cwd => 2.06,
+Term::BashTab => 0.02, }, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Audio/TagLib/Shell.pm', # retrieve abstract from module
        AUTHOR         => 'Dongxu Ma <dongxu.ma@gmail.com>') : ()),

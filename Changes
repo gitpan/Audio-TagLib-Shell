@@ -6,3 +6,6 @@ Revision history for Perl extension Audio::TagLib::Shell.
 
 1.41 Sat Dec 31 2005
 	- <TAB> completion bug fix
+
+1.42 Tue Feb 07 2006
+    - use Term::BashTab instead of Term::ReadLine
